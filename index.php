@@ -6,8 +6,8 @@
  * Save this file into the root of your WordPress install to run. Other wise, modify the file path for the wp-load.php.
  *
  * EG. Use this URL to generate the XML. Or use cURL to save the file.
- * http://vip.dev/import-applications/import-csv-makerfaire.php?file_name=BazBizMF13_Vendor-IMPORT.csv&url=http://vip.dev/import-applications/imports/&type=exhibit
- * curl "http://vip.dev/import-applications/import-csv-makerfaire.php?file_name=BazBizMF13_Vendor-IMPORT.csv&url=http://vip.dev/import-applications/imports/&type=exhibit" -o "makerfaire-exibit-import.xml"
+ * http://vip.dev/import-applications/index.php?file_name=template.csv&type=exhibit&url=http://vip.dev/import-applications/imports/
+ * curl "http://vip.dev/import-applications/index.php?file_name=template.csv&type=exhibit&url=http://vip.dev/import-applications/imports/" -o "makerfaire-exibit-import.xml"
  *
  * @version 1.2
  */
