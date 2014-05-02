@@ -113,7 +113,7 @@
         "SALES": null,
         "PLACEMENT": "Sponsor",
         "PROJECT_NAME": "Afinia 3D",
-        "PUBLIC_DESCRIPTION": "Afinia 3D will be showing it's award winning 3D printer, and full line of ABS filament. Our H series 3D printer was voted ",
+        "PUBLIC_DESCRIPTION": "Afinia 3D will be showing it's award winning 3D printer, and full line of ABS filament. Our H series 3D printer was voted \"Best Overall Experience\" in the recent make magazine 3D printer shootout. Live 3D printing demonstrations will be held continuously during the day.",
         "PROJECT_PHOTO": null,
         "PROJECT_WEBSITE": "www.afinia3d.com",
         "CATEGORIES": "3DPrinting",
