@@ -23,6 +23,8 @@ require( '../wp/wp-load.php' );
  *
  * @version  1.2
  */
+global $type;
+
 $file_name = ( ! empty( $_REQUEST['file_name'] ) ? $_REQUEST['file_name'] : null );
 $url 	   = ( ! empty( $_REQUEST['url'] ) ? $_REQUEST['url'] : null );
 $type 	   = ( ! empty( $_REQUEST['type'] ) ? $_REQUEST['type'] : null );
@@ -85,65 +87,65 @@ function mf_get_the_file( $file_name, $url ) {
 		$results[] 	= json_decode( $json, true );
 	}
 
-	return $results;
+	if ( strpos( $file_name, '.csv') ) {
 
 	// // Use fopen() to read the file. NOTE, make sure spreadsheet is converted to a CSV file.
-	// if ( ( $file = fopen( $url . $file_name, 'r' ) ) !== false ) {
+	if ( ( $file = fopen( $file_name, 'r' ) ) !== false ) {
 
-	// 	// Loop through every row using a comma delimmited separator.
-	// 	while ( ( $data = fgetcsv( $file, 0, ',' ) ) !== false ) {
-
+	  // Loop through every row using a comma delimmited separator.
+	  while ( ( $data = fgetcsv( $file, 0, ',' ) ) !== false ) {
 	// 		// Setup our array containing all of the values in the CSV.
 	// 		// NOTE: There were a lot of extra things not visable in the original spreadsheet?
-	// 		if ( $type == 'exhibit' ) {
-	// 			$columns = array(
-	// 				'group'					=> $data[ $i ],  // GROUP WITH
-	// 				'faire'					=> $data[1],  // EVENT
-	// 				'form_type' 			=> $data[2],  // FORM TYPE
-	// 				'status' 				=> $data[3],  // STATUS
-	// 				'cats'					=> $data[5],  // CATEGORY
-	// 				'sales'					=> $data[6],  // SALES
-	// 				'location'				=> $data[7],  // PLACEMENT REQUEST (should be the location ID)
-	// 				'project_name' 			=> $data[8],  // PROJECT NAME
-	// 				'public_description'	=> $data[9],  // PUBLIC DESCRIPTION
-	// 				'project_photo'			=> $data[10], // PROJECT PHOTO
-	// 				'project_website'		=> $data[11], // PROJECT WEBSITE
-	// 				'name'				    => $data[12], // MAKER NAME
-	// 				'email'					=> '', // MAKER EMAIL
-	// 				'photo'					=> '', // MAKER PHOTO
-	// 				'city'					=> $data[15], // CITY
-	// 				'state'					=> $data[16], // STATE
-	// 				'zip'					=> $data[17], // ZIP
-	// 				'country'				=> $data[18], // COUNTRY
-	// 				'first_time'			=> $data[19], // FIRST TIME
-	// 				'tags'					=> '', // TAGS
-	// 			);
-	// 		} elseif ( $type == 'sponsor' ) {
-	// 			$columns = array(
-	// 				'status' 				=> $data[3],
-	// 				'form_type' 			=> $data[2],
-	// 				'project_name' 			=> $data[8],
-	// 				'public_description'	=> $data[9],
-	// 				'project_photo'			=> '',
-	// 				'project_website'		=> $data[11],
-	// 				'group'					=> $data[0],
-	// 				'cats'					=> '',
-	// 				'tags'					=> '',
-	// 				'name'				    => '',
-	// 				'email'					=> '',
-	// 			);
+	if ( $type == 'exhibit' ) {
+	 			$columns = array(
+	 				'group'					=> $data[0],  // GROUP WITH
+	 				'faire'					=> $data[1],  // EVENT
+	 				'form_type' 			=> $data[2],  // FORM TYPE
+	 				'status' 				=> $data[3],  // STATUS
+	 				'cats'					=> $data[5],  // CATEGORY
+	 				'sales'					=> $data[6],  // SALES
+	 				'location'				=> $data[7],  // PLACEMENT REQUEST (should be the location ID)
+	 				'project_name' 			=> $data[8],  // PROJECT NAME
+	 				'public_description'	=> $data[9],  // PUBLIC DESCRIPTION
+	 				'project_photo'			=> $data[10], // PROJECT PHOTO
+	 				'project_website'		=> $data[11], // PROJECT WEBSITE
+	 				'name'				    => $data[12], // MAKER NAME
+	 				'email'					=> '', // MAKER EMAIL
+	 				'photo'					=> '', // MAKER PHOTO
+	 				'city'					=> $data[15], // CITY
+	 				'state'					=> $data[16], // STATE
+	 				'zip'					=> $data[17], // ZIP
+	 				'country'				=> $data[18], // COUNTRY
+	 				'first_time'			=> $data[19], // FIRST TIME
+	 				'tags'					=> '', // TAGS
+	 			);
+	} elseif ( $type == 'sponsor' ) {
+	 			$columns = array(
+	 				'status' 				=> $data[3],
+	 				'form_type' 			=> $data[2],
+	 				'project_name' 			=> $data[8],
+	 				'public_description'	=> $data[9],
+	 				'project_photo'			=> '',
+	 				'project_website'		=> $data[11],
+   				'group'					=> $data[0],
+	 				'cats'					=> '',
+	 				'tags'					=> '',
+	 				'name'				    => '',
+	 				'email'					=> '',
+	 			);
 
-	// 		}
+	 		}
 
-	// 		$results[] = $columns;
-	// 	}
+	 		$results[] = $columns;
+	 	}
 
-	// 	// Close the read connect
-	// 	fclose( $file );
-	// }
+	 	// Close the read connect
+	 	fclose( $file );
+	 }
 
+  }
 	// Send back the array of arrays :P
-	// return $results;
+	return $results;
 }
 
 
@@ -161,14 +163,14 @@ function mf_generate_xml( $results ) {
 
 	$i = 0;
 	// Loop through the results from mf_get_the_file and use array_slice() to remove the first array as we don't need it.
-	foreach ( $results[0] as $column ) {
+	foreach ( array_slice($results, 1) as $column ) {
 		// var_dump( $column );
 		echo "\t<item>\n";
-		echo "\t\t<title>" . wp_specialchars( $column['PROJECT_NAME'] ) . "</title>\n";
+		echo "\t\t<title>" . esc_html( $column['project_name'] ) . "</title>\n";
 		echo "\t\t<pubdate>" . date( 'r' ) . "</pubdate>\n";
 		echo "\t\t<dc:creator>makemagazine</dc:creator>\n";
 		$name = 'MAKER NAME';
-		echo "\t\t" . '<content:encoded><![CDATA[{"form_type":"' . strtolower( $column['TYPE'] ) . '","maker_faire":"2014_bayarea","uid":"","tags":"' . $column['TAGS'] . '","cats":"' . $column['CATEGORIES'] . '","project_name":"' . ent2ncr( esc_html( $column['PROJECT_NAME'] ) ) . '","private_description":"","public_description":"' . ent2ncr( esc_html( $column['PUBLIC_DESCRIPTION'] ) ) . '","project_photo":"' . $column['PROJECT_PHOTO'] . '","project_photo_thumb":"","project_website":"' . $column['PROJECT_WEBSITE'] . '","project_video":"","food":"","food_details":"","sales":"","sales_details":"","booth_size":"","booth_size_details":"","tables_chairs":"","tables_chairs_details":"","layout":"","activity":"","placement":"","booth_location":"","booth_options":"","lighting":"","noise":"","power":"","what_are_you_powering":"","amps":"","amps_details":"","internet":"","radio":"","radio_frequency":"","radio_details":"","fire":"","hands_on":"","safety_details":"","email":"' . $column['EMAIL'] . '","name":"' . $column[ $name ] . '","maker":"One maker","maker_name":"' . $column[$name] . '","maker_email":"' . $column['EMAIL'] . '","maker_photo":"' . $column['PROJECT_PHOTO'] . '","maker_photo_thumb":"","maker_bio":"","m_maker_name":[""],"m_maker_email":[""],"m_maker_photo":[""],"m_maker_photo_thumb":"","m_maker_bio":[""],"m_maker_gigyaid":[""],"group_name":"","group_bio":"","group_photo":"","group_photo_thumb":"","group_website":"","phone1":"","phone1_type":"","phone2":"","phone2_type":"","private_address":"","private_address2":"","private_city":"","private_state":"","private_zip":"","private_country":"","org_type":"","large_non_profit":"","supporting_documents":"","references":"","referrals":"","hear_about":"","first_time":"","anything_else":""}]]></content:encoded>' . "\n";
+		echo "\t\t" . '<content:encoded><![CDATA[{"form_type":"' . strtolower( $column['form_type'] ) . '","maker_faire":"2014_newyork","uid":"","tags":"sponsors","cats":"' . $column['cats'] . '","project_name":"' . ent2ncr( esc_html( $column['project_name'] ) ) . '","private_description":"","public_description":"' . ent2ncr( esc_html( $column['public_description'] ) ) . '","project_photo":"' . $column['project_photo'] . '","project_photo_thumb":"","project_website":"' . $column['project_website'] . '","project_video":"","food":"","food_details":"","sales":"","sales_details":"","booth_size":"","booth_size_details":"","tables_chairs":"","tables_chairs_details":"","layout":"","activity":"","placement":"","booth_location":"","booth_options":"","lighting":"","noise":"","power":"","what_are_you_powering":"","amps":"","amps_details":"","internet":"","radio":"","radio_frequency":"","radio_details":"","fire":"","hands_on":"","safety_details":"","email":"' . $column['email'] . '","name":"' . $column['name'] . '","maker":"One maker","maker_name":"' . $column['name'] . '","maker_email":"' . $column['email'] . '","maker_photo":"' . $column['project_photo'] . '","maker_photo_thumb":"","maker_bio":"","m_maker_name":[""],"m_maker_email":[""],"m_maker_photo":[""],"m_maker_photo_thumb":"","m_maker_bio":[""],"m_maker_gigyaid":[""],"group_name":"","group_bio":"","group_photo":"","group_photo_thumb":"","group_website":"","phone1":"","phone1_type":"","phone2":"","phone2_type":"","private_address":"","private_address2":"","private_city":"","private_state":"","private_zip":"","private_country":"","org_type":"","large_non_profit":"","supporting_documents":"","references":"","referrals":"","hear_about":"","first_time":"","anything_else":""}]]></content:encoded>' . "\n";
 		echo "\t\t<wp:post_date>" . date( 'Y-m-d' ) . "</wp:post_date>\n";
 		echo "\t\t<wp:comment_status>closed</wp:comment_status>\n";
 		echo "\t\t<wp:ping_status>closed</wp:ping_status>\n";
@@ -185,9 +187,9 @@ function mf_generate_xml( $results ) {
 				echo "\t\t<category domain=\"category\" nicename=\"" . sanitize_title( strtolower( $cat ) ) . "\"><![CDATA[" . $cat . "]]></category>\n";
 			}
 		}
-		echo "\t\t<category domain=\"type\" nicename=\"" . strtolower( $column['TYPE'] ) . "\"><![CDATA[" . strtolower( $column['TYPE'] ) . "]]></category>\n";
-		echo "\t\t<category domain=\"group\" nicename=\"" . strtolower( $column['GROUP'] ) . "\"><![CDATA[" . $column['GROUP'] . "]]></category>\n";
-		echo "\t\t<category domain=\"faire\" nicename=\"maker-faire-bay-area-2014\"><![CDATA[Maker Faire Bay Area 2014]]></category>\n";
+		echo "\t\t<category domain=\"type\" nicename=\"" . strtolower( $column['form_type'] ) . "\"><![CDATA[" . strtolower( $column['form_type'] ) . "]]></category>\n";
+		echo "\t\t<category domain=\"group\" nicename=\"" . strtolower( $column['group'] ) . "\"><![CDATA[" . $column['group'] . "]]></category>\n";
+		echo "\t\t<category domain=\"faire\" nicename=\"new-york-maker-faire-2014\"><![CDATA[Maker Faire New York 2014]]></category>\n";
 		echo "\t\t<wp:postmeta>\n";
 		echo "\t\t\t<wp:meta_key>_ef_editorial_meta_checkbox_email-notifications</wp:meta_key>\n";
 		echo "\t\t\t<wp:meta_value><![CDATA[1]]></wp:meta_value>\n"; // 1 checks the box which DISABLES auto responders
@@ -196,7 +198,7 @@ function mf_generate_xml( $results ) {
 		echo "\t\t</wp:postmeta>\n";
 		echo "\t\t<wp:postmeta>\n";
 		echo "\t\t\t<wp:meta_key>_mf_form_type</wp:meta_key>\n";
-		echo "\t\t\t<wp:meta_value><![CDATA[" . $column['TYPE'] . "]]></wp:meta_value>\n";
+		echo "\t\t\t<wp:meta_value><![CDATA[" . $column['form_type'] . "]]></wp:meta_value>\n";
 		echo "\t\t</wp:postmeta>\n";
 		echo "\t\t<wp:postmeta>\n";
 		echo "\t\t\t<wp:meta_key>_mf_log</wp:meta_key>\n";
